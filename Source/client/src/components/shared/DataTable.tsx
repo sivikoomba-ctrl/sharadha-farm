@@ -14,7 +14,7 @@ interface DataTableProps<T> {
   rowClassName?: (row: T) => string;
 }
 
-export default function DataTable<T extends Record<string, unknown> & { id: string }>({
+export default function DataTable<T extends { id: string }>({
   columns,
   data,
   loading,

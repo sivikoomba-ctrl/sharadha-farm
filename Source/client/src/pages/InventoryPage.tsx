@@ -10,7 +10,7 @@ import PageHeader from '@/components/shared/PageHeader';
 import DataTable from '@/components/shared/DataTable';
 import type { Column } from '@/components/shared/DataTable';
 import ConfirmDialog from '@/components/shared/ConfirmDialog';
-import type { InventoryItem, InventoryCategory } from '@shared/types';
+import type { InventoryItem } from '@shared/types';
 
 const inventorySchema = z.object({
   name: z.string().min(1, 'Name is required'),
