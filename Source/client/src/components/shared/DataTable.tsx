@@ -14,7 +14,7 @@ interface DataTableProps<T> {
   rowClassName?: (row: T) => string;
 }
 
-export default function DataTable<T extends Record<string, unknown>>({
+export default function DataTable<T extends Record<string, unknown> & { id: string }>({
   columns,
   data,
   loading,
@@ -39,8 +39,8 @@ export default function DataTable<T extends Record<string, unknown>>({
           </tr>
         </thead>
         <tbody className="divide-y divide-gray-200 bg-white">
-          {data.map((row, i) => (
-            <tr key={i} className={rowClassName?.(row) ?? ''}>
+          {data.map((row) => (
+            <tr key={row.id} className={rowClassName?.(row) ?? ''}>
               {columns.map((col) => (
                 <td key={String(col.accessor)} className="whitespace-nowrap px-4 py-3 text-sm text-gray-700">
                   {col.cell ? col.cell(row) : String((row as Record<string, unknown>)[col.accessor as string] ?? '')}

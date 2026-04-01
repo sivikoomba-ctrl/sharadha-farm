@@ -28,6 +28,7 @@ export async function create(req: Request, res: Response) {
 export async function update(req: Request, res: Response) {
   try {
     const harvest = await harvestService.update(req.params.id, req.body);
+    if (!harvest) return error(res, 'Harvest record not found', 404);
     return success(res, harvest);
   } catch (err: any) {
     return error(res, err.message, 500);

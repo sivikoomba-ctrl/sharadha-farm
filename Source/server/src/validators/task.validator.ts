@@ -8,7 +8,7 @@ export const createTaskSchema = z.object({
   status: z.enum(['pending', 'in_progress', 'completed', 'cancelled']),
   priority: z.enum(['low', 'medium', 'high']),
   category: z.enum(['pruning', 'fertilizing', 'irrigation', 'harvest', 'pest_control', 'general']),
-  due_date: z.string().min(1, 'Due date is required'),
+  due_date: z.string().min(1, 'Due date is required').date('Invalid date format (expected YYYY-MM-DD)'),
 });
 
 export const updateTaskSchema = createTaskSchema.partial();

@@ -34,7 +34,7 @@ export default function InventoryPage() {
   const [editingItem, setEditingItem] = useState<InventoryItem | null>(null);
   const [deletingId, setDeletingId] = useState<string | null>(null);
 
-  const { data, isLoading } = useQuery({
+  const { data, isLoading, isError } = useQuery({
     queryKey: ['inventory', page, categoryFilter],
     queryFn: () => fetchInventory({ page, limit: 10, category: categoryFilter }),
   });
@@ -141,6 +141,12 @@ export default function InventoryPage() {
         </select>
       </div>
 
+      {isError && (
+        <div className="mb-4 rounded-lg bg-red-50 border border-red-200 p-4 text-sm text-red-800">
+          Failed to load inventory. Please try again later.
+        </div>
+      )}
+
       <DataTable
         columns={columns}
         data={data?.data ?? []}
@@ -212,7 +218,7 @@ export default function InventoryPage() {
               </div>
               <div className="flex justify-end gap-3 pt-2">
                 <button type="button" onClick={closeForm} className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50">Cancel</button>
-                <button type="submit" className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700">Save</button>
+                <button type="submit" disabled={createMutation.isPending || updateMutation.isPending} className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50">{createMutation.isPending || updateMutation.isPending ? 'Saving...' : 'Save'}</button>
               </div>
             </form>
           </div>

@@ -19,8 +19,7 @@ export async function getAll(filters: InventoryFilters = {}) {
   if (category) baseQuery.where('category', category);
   if (low_stock) baseQuery.whereRaw('quantity < reorder_level');
 
-  const countQuery = baseQuery.clone();
-  const [{ count }] = await countQuery.count('id as count');
+  const [{ count }] = await baseQuery.clone().count('id as count');
   const total = Number(count);
 
   const data: InventoryItem[] = await baseQuery

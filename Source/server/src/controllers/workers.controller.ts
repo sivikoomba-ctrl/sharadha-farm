@@ -18,6 +18,7 @@ export async function getAll(req: Request, res: Response) {
 export async function getById(req: Request, res: Response) {
   try {
     const worker = await workerService.getById(req.params.id);
+    if (!worker) return error(res, 'Worker not found', 404);
     return success(res, worker);
   } catch (err: any) {
     return error(res, err.message, 500);
@@ -36,6 +37,7 @@ export async function create(req: Request, res: Response) {
 export async function update(req: Request, res: Response) {
   try {
     const worker = await workerService.update(req.params.id, req.body);
+    if (!worker) return error(res, 'Worker not found', 404);
     return success(res, worker);
   } catch (err: any) {
     return error(res, err.message, 500);

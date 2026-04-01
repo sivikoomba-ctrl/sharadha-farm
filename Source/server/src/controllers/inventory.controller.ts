@@ -20,6 +20,7 @@ export async function getAll(req: Request, res: Response) {
 export async function getById(req: Request, res: Response) {
   try {
     const item = await inventoryService.getById(req.params.id);
+    if (!item) return error(res, 'Inventory item not found', 404);
     return success(res, item);
   } catch (err: any) {
     return error(res, err.message, 500);
@@ -38,6 +39,7 @@ export async function create(req: Request, res: Response) {
 export async function update(req: Request, res: Response) {
   try {
     const item = await inventoryService.update(req.params.id, req.body);
+    if (!item) return error(res, 'Inventory item not found', 404);
     return success(res, item);
   } catch (err: any) {
     return error(res, err.message, 500);

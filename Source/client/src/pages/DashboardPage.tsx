@@ -8,7 +8,7 @@ import {
 } from 'recharts';
 
 export default function DashboardPage() {
-  const { data: summary, isLoading: loadingSummary } = useQuery({
+  const { data: summary, isLoading: loadingSummary, isError: errorSummary } = useQuery({
     queryKey: ['dashboard-summary'],
     queryFn: fetchDashboardSummary,
   });
@@ -24,6 +24,11 @@ export default function DashboardPage() {
   });
 
   if (loadingSummary) return <LoadingSpinner />;
+  if (errorSummary) return (
+    <div className="rounded-lg bg-red-50 border border-red-200 p-4 text-sm text-red-800">
+      Failed to load dashboard data. Please try again later.
+    </div>
+  );
 
   const kpis = [
     {

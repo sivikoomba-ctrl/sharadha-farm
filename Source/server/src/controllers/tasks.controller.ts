@@ -21,6 +21,7 @@ export async function getAll(req: Request, res: Response) {
 export async function getById(req: Request, res: Response) {
   try {
     const task = await taskService.getById(req.params.id);
+    if (!task) return error(res, 'Task not found', 404);
     return success(res, task);
   } catch (err: any) {
     return error(res, err.message, 500);
@@ -39,6 +40,7 @@ export async function create(req: Request, res: Response) {
 export async function update(req: Request, res: Response) {
   try {
     const task = await taskService.update(req.params.id, req.body);
+    if (!task) return error(res, 'Task not found', 404);
     return success(res, task);
   } catch (err: any) {
     return error(res, err.message, 500);
@@ -48,6 +50,7 @@ export async function update(req: Request, res: Response) {
 export async function updateStatus(req: Request, res: Response) {
   try {
     const task = await taskService.updateStatus(req.params.id, req.body.status);
+    if (!task) return error(res, 'Task not found', 404);
     return success(res, task);
   } catch (err: any) {
     return error(res, err.message, 500);
