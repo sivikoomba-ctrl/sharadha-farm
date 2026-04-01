@@ -1,0 +1,17 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: sharadha_farm_db
+    environment:
+      POSTGRES_DB: sharadha_farm
+      POSTGRES_USER: farm_admin
+      POSTGRES_PASSWORD: farm_secret_2026
+    ports:
+      - '5433:5432'
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+volumes:
+  pgdata:

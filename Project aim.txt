@@ -1,0 +1,2 @@
+Farm Management System for Sharadha Reddy's Farm - It is a blueberry farm. All operations monitored through a dashboard.
+Sensors data's are retrieved and analyzed (future addition)
