@@ -1,16 +1,18 @@
 import { Request, Response } from 'express';
-import { success, error } from '../utils/apiResponse';
+import { success, paginated, error } from '../utils/apiResponse';
+import { parsePagination } from '../utils/pagination';
 import * as harvestService from '../services/harvests.service';
 
 export async function getAll(req: Request, res: Response) {
   try {
+    const { page, limit, offset } = parsePagination(req);
     const { zone_id, from, to } = req.query;
     const filters: Record<string, any> = {};
     if (zone_id) filters.zone_id = zone_id as string;
-    if (from) filters.from = from as string;
-    if (to) filters.to = to as string;
-    const harvests = await harvestService.getAll(filters);
-    return success(res, harvests);
+    if (from) filters.start_date = from as string;
+    if (to) filters.end_date = to as string;
+    const { data, total } = await harvestService.getAll({ ...filters, limit, offset });
+    return paginated(res, data, total, page, limit);
   } catch (err: any) {
     return error(res, err.message, 500);
   }

@@ -4,6 +4,8 @@ import pino from 'pino';
 
 const logger = pino();
 
-app.listen(env.PORT, () => {
-  logger.info(`Server running on http://localhost:${env.PORT}`);
+const host = process.env.NODE_ENV === 'production' ? '0.0.0.0' : 'localhost';
+
+app.listen(env.PORT, host, () => {
+  logger.info(`Server running on http://${host}:${env.PORT}`);
 });

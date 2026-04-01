@@ -1,4 +1,5 @@
 import { Router } from 'express';
+import authRoutes from './auth.routes';
 import zoneRoutes from './zones.routes';
 import workerRoutes from './workers.routes';
 import taskRoutes from './tasks.routes';
@@ -9,6 +10,7 @@ import dashboardRoutes from './dashboard.routes';
 
 const router = Router();
 
+router.use('/auth', authRoutes);
 router.use('/zones', zoneRoutes);
 router.use('/workers', workerRoutes);
 router.use('/tasks', taskRoutes);

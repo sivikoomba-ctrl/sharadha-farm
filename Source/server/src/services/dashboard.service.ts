@@ -1,5 +1,17 @@
-import db from '../config/db';
+import db, { isPostgres } from '../config/db';
 import { DashboardSummary, TrendPoint, FinanceTrendPoint } from '../../../shared/types';
+
+function monthExpr(column: string): string {
+  return isPostgres
+    ? `to_char(${column}, 'YYYY-MM')`
+    : `strftime('%Y-%m', ${column})`;
+}
+
+function dateAgo12Months(): ReturnType<typeof db.raw> {
+  return isPostgres
+    ? db.raw("(CURRENT_DATE - interval '12 months')")
+    : db.raw("date('now', '-12 months')");
+}
 
 export async function getSummary(): Promise<DashboardSummary> {
   const currentYear = new Date().getFullYear();
@@ -48,23 +60,25 @@ export async function getSummary(): Promise<DashboardSummary> {
 }
 
 export async function getHarvestTrend(): Promise<TrendPoint[]> {
+  const monthCol = monthExpr('harvest_date');
   const rows = await db('harvests')
-    .select(db.raw("strftime('%Y-%m', harvest_date) as month"))
+    .select(db.raw(`${monthCol} as month`))
     .sum('quantity_kg as value')
-    .where('harvest_date', '>=', db.raw("date('now', '-12 months')"))
-    .groupByRaw("strftime('%Y-%m', harvest_date)")
+    .where('harvest_date', '>=', dateAgo12Months())
+    .groupByRaw(monthCol)
     .orderBy('month', 'asc');
 
   return rows.map((r: any) => ({ month: r.month, value: Number(r.value) }));
 }
 
 export async function getFinanceTrend(): Promise<FinanceTrendPoint[]> {
+  const monthCol = monthExpr('transaction_date');
   const rows = await db('transactions')
-    .select(db.raw("strftime('%Y-%m', transaction_date) as month"))
+    .select(db.raw(`${monthCol} as month`))
     .sum(db.raw("CASE WHEN type = 'revenue' THEN amount ELSE 0 END as revenue"))
     .sum(db.raw("CASE WHEN type = 'expense' THEN amount ELSE 0 END as expenses"))
-    .where('transaction_date', '>=', db.raw("date('now', '-12 months')"))
-    .groupByRaw("strftime('%Y-%m', transaction_date)")
+    .where('transaction_date', '>=', dateAgo12Months())
+    .groupByRaw(monthCol)
     .orderBy('month', 'asc');
 
   return rows.map((r: any) => ({

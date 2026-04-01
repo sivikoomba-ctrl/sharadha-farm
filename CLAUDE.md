@@ -9,7 +9,8 @@ Farm Management System for Sharadha Reddy's Blueberry Farm — a full-stack dash
 ## Tech Stack
 
 - **Client:** React 19 + TypeScript, Vite, TailwindCSS 4, React Router, TanStack Query & Table, Recharts, React Hook Form + Zod, Axios
-- **Server:** Express + TypeScript, Knex (query builder/migrations), better-sqlite3, Pino logger
+- **Server:** Express + TypeScript, Knex (query builder/migrations), better-sqlite3 (local) / PostgreSQL 16 (production), JWT auth, Pino logger
+- **Testing:** Vitest for both client and server
 - **Shared:** TypeScript types and constants in `Source/shared/`
 
 ## Commands
@@ -25,6 +26,8 @@ cd Source/client && npm install
 npm run dev        # Vite dev server on :5173
 npm run build      # tsc + vite build
 npm run lint       # ESLint (flat config v9)
+npm run test       # Vitest (run once)
+npm run test:watch # Vitest (watch mode)
 ```
 
 ### Server (`Source/server/`)
@@ -34,11 +37,13 @@ npm run build            # tsc → dist/
 npm run migrate          # knex migrate:latest
 npm run migrate:rollback # knex migrate:rollback
 npm run seed             # knex seed:run
+npm run test             # Vitest (run once)
+npm run test:watch       # Vitest (watch mode)
 ```
 
 ### Docker (`Source/`)
 ```bash
-docker-compose up   # PostgreSQL on :5433 (not wired into app yet)
+docker-compose up   # PostgreSQL on :5433
 ```
 
 ## Architecture
@@ -51,9 +56,11 @@ docker-compose up   # PostgreSQL on :5433 (not wired into app yet)
 
 **Path aliases:** Both client and server use `@shared/*` → `../shared/` and `@/*` → `src/`.
 
-**API format:** All responses follow `{ success, data, error? }` or paginated `{ success, data[], total, page, limit }`. API routes: `/api/zones`, `/api/workers`, `/api/tasks`, `/api/inventory`, `/api/transactions`, `/api/harvests`, `/api/dashboard`.
+**Auth:** JWT-based authentication via `/api/auth` (register, login, me). `authenticate` middleware in `src/middleware/auth.ts` extracts Bearer tokens. Auth is available but not enforced on data routes yet — apply `authenticate` to routes as needed. Rate limiting: 100 req/15min for API, 20 req/15min for auth.
 
-**Database:** SQLite via better-sqlite3 for local dev. DB file at `Source/server/data/sharadha_farm.db`. Both `knexfile.ts` and `src/config/db.ts` hardcode the SQLite client — PostgreSQL support (docker-compose exists) is not wired up yet. 6 tables: zones, workers, tasks, inventory_items, transactions, harvests. Migrations are numbered `001`–`007` in `src/migrations/` (007 adds indexes on foreign keys).
+**API format:** All responses follow `{ success, data, error? }` or paginated `{ success, data[], total, page, limit }`. API routes: `/api/auth`, `/api/zones`, `/api/workers`, `/api/tasks`, `/api/inventory`, `/api/transactions`, `/api/harvests`, `/api/dashboard`.
+
+**Database:** SQLite via better-sqlite3 for local dev (default when `DATABASE_URL` is not set). PostgreSQL when `DATABASE_URL` is set — both `knexfile.ts` and `src/config/db.ts` auto-detect. DB file at `Source/server/data/sharadha_farm.db`. 7 tables: zones, workers, tasks, inventory_items, transactions, harvests, users. Migrations numbered `001`–`008` in `src/migrations/`. Dashboard SQL uses helper functions (`monthExpr`, `dateAgo12Months`) that emit the correct SQL for both SQLite and PostgreSQL.
 
 **Shared types:** `Source/shared/types.ts` defines all entity interfaces, API response wrappers, and union string literal types. `Source/shared/constants.ts` provides matching `as const` arrays for enum-like values. Both client and server import from here — keep them in sync when adding fields.
 
@@ -61,8 +68,10 @@ docker-compose up   # PostgreSQL on :5433 (not wired into app yet)
 
 ### Server (`Source/server/.env`)
 ```
+# DATABASE_URL=postgresql://...       # Uncomment for PostgreSQL; leave commented for SQLite
 PORT=3001                              # Express port
 CORS_ORIGIN=http://localhost:5173      # Allowed CORS origin
+JWT_SECRET=dev-secret-change-in-production
 ```
 
 ### Client (Vite env)
@@ -79,5 +88,5 @@ VITE_API_BASE_URL=http://localhost:3001/api   # defaults to this if unset
 - Axios response interceptor in `axiosClient.ts` normalizes error messages from the API
 - All CRUD pages include `isError` UI state and disabled submit buttons during mutations
 - Date fields in validators use Zod `.date()` for YYYY-MM-DD format enforcement
-- No auth layer currently exists
-- No test framework is set up yet
+- Auth endpoints at `/api/auth` — not enforced on data routes yet (apply `authenticate` middleware as needed)
+- Tests in `src/__tests__/` (server) and `src/test/` (client) — run with `npm test`

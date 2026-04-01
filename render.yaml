@@ -1,0 +1,26 @@
+services:
+  - type: web
+    name: sharadha-farm-api
+    runtime: docker
+    dockerfilePath: Source/server/Dockerfile
+    dockerContext: Source
+    plan: free
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: sharadha-farm-db
+          property: connectionString
+      - key: PORT
+        value: 3001
+      - key: CORS_ORIGIN
+        value: https://sharadha.neviai.ai
+      - key: JWT_SECRET
+        generateValue: true
+      - key: NODE_ENV
+        value: production
+
+databases:
+  - name: sharadha-farm-db
+    plan: free
+    databaseName: sharadha_farm
+    user: farm_admin

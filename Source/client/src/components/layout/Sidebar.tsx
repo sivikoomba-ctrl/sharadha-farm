@@ -7,11 +7,13 @@ import {
   DollarSign,
   Users,
   MapPin,
+  Cherry,
 } from 'lucide-react';
 
 const navItems = [
   { to: '/', label: 'Dashboard', icon: LayoutDashboard },
   { to: '/tasks', label: 'Tasks', icon: ClipboardList },
+  { to: '/harvests', label: 'Harvests', icon: Cherry },
   { to: '/inventory', label: 'Inventory', icon: Package },
   { to: '/finance', label: 'Finance', icon: DollarSign },
   { to: '/workers', label: 'Workers', icon: Users },
