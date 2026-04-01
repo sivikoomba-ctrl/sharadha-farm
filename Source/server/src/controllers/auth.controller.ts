@@ -30,3 +30,14 @@ export async function login(req: Request, res: Response) {
 export async function me(req: AuthRequest, res: Response) {
   return success(res, req.user);
 }
+
+export async function updateProfile(req: AuthRequest, res: Response) {
+  try {
+    const { full_name, current_password, new_password } = req.body;
+    const result = await authService.updateProfile(req.user!.id, { full_name, current_password, new_password });
+    return success(res, result);
+  } catch (err: any) {
+    const status = err.message === 'Current password is incorrect' ? 400 : 500;
+    return error(res, err.message, status);
+  }
+}

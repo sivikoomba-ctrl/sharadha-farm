@@ -9,6 +9,7 @@ import FinancePage from './pages/FinancePage'
 import WorkersPage from './pages/WorkersPage'
 import ZonesPage from './pages/ZonesPage'
 import HarvestsPage from './pages/HarvestsPage'
+import ProfilePage from './pages/ProfilePage'
 import NotFoundPage from './pages/NotFoundPage'
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
@@ -44,6 +45,7 @@ function App() {
         <Route path="/workers" element={<WorkersPage />} />
         <Route path="/zones" element={<ZonesPage />} />
         <Route path="/harvests" element={<HarvestsPage />} />
+        <Route path="/profile" element={<ProfilePage />} />
         <Route path="*" element={<NotFoundPage />} />
       </Route>
     </Routes>

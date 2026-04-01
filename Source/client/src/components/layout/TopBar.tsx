@@ -1,5 +1,6 @@
 import { format } from 'date-fns';
 import { LogOut } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
 
 interface TopBarProps {
@@ -18,7 +19,7 @@ export default function TopBar({ title }: TopBarProps) {
         </span>
         {user && (
           <div className="flex items-center gap-3 border-l pl-4">
-            <span className="text-sm font-medium text-gray-700">{user.full_name}</span>
+            <Link to="/profile" className="text-sm font-medium text-gray-700 hover:text-indigo-600 transition-colors">{user.full_name}</Link>
             <button
               onClick={logout}
               className="flex items-center gap-1 rounded-lg px-2 py-1.5 text-sm text-gray-500 hover:bg-gray-100 hover:text-gray-700 transition-colors"

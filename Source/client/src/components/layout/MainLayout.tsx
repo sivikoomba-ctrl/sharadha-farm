@@ -9,6 +9,8 @@ const pageTitles: Record<string, string> = {
   '/finance': 'Finance',
   '/workers': 'Workers',
   '/zones': 'Zones',
+  '/harvests': 'Harvests',
+  '/profile': 'My Profile',
 };
 
 export default function MainLayout() {

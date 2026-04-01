@@ -42,6 +42,32 @@ export async function login(username: string, password: string) {
   return { token: generateToken(payload), user: payload };
 }
 
+export async function updateProfile(userId: string, data: { full_name?: string; current_password?: string; new_password?: string }) {
+  const user: User | undefined = await db('users').where({ id: userId }).first();
+  if (!user) throw new Error('User not found');
+
+  const updates: Record<string, string> = {};
+
+  if (data.full_name) {
+    updates.full_name = data.full_name;
+  }
+
+  if (data.new_password) {
+    if (!data.current_password) throw new Error('Current password is required');
+    const valid = await bcrypt.compare(data.current_password, user.password_hash);
+    if (!valid) throw new Error('Current password is incorrect');
+    updates.password_hash = await bcrypt.hash(data.new_password, 10);
+  }
+
+  if (Object.keys(updates).length === 0) throw new Error('No changes provided');
+
+  await db('users').where({ id: userId }).update(updates);
+
+  const updated = await db('users').where({ id: userId }).first();
+  const payload = { id: updated.id, username: updated.username, full_name: updated.full_name, role: updated.role };
+  return { token: generateToken(payload), user: payload };
+}
+
 export function generateToken(payload: UserPayload): string {
   return jwt.sign(payload, env.JWT_SECRET, { expiresIn: '24h' });
 }

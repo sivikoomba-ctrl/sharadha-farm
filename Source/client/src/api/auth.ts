@@ -46,3 +46,14 @@ export async function getMe(): Promise<MeResponse> {
   const res = await axiosClient.get<MeResponse>('/auth/me');
   return res.data;
 }
+
+interface UpdateProfileRequest {
+  full_name?: string;
+  current_password?: string;
+  new_password?: string;
+}
+
+export async function updateProfile(data: UpdateProfileRequest): Promise<AuthResponse> {
+  const res = await axiosClient.put<AuthResponse>('/auth/profile', data);
+  return res.data;
+}
