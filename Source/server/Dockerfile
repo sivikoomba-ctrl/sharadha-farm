@@ -34,4 +34,4 @@ RUN npm install tsx
 
 EXPOSE 3001
 
-CMD ["sh", "-c", "npx tsx node_modules/.bin/knex migrate:latest --knexfile knexfile.ts && node dist/index.js"]
+CMD ["sh", "-c", "npx tsx node_modules/.bin/knex migrate:latest --knexfile knexfile.ts && node dist/server/src/index.js"]
