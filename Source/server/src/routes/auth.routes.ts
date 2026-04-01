@@ -6,7 +6,8 @@ import * as authController from '../controllers/auth.controller';
 
 const router = Router();
 
-router.post('/register', validate(registerSchema), authController.register);
+// Registration requires admin auth — no public signups
+router.post('/register', authenticate, validate(registerSchema), authController.register);
 router.post('/login', validate(loginSchema), authController.login);
 router.get('/me', authenticate, authController.me);
 

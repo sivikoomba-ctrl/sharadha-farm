@@ -27,7 +27,8 @@ export async function register(username: string, password: string, full_name: st
   const password_hash = await bcrypt.hash(password, 10);
   await db('users').insert({ id, username, password_hash, full_name, role });
 
-  return generateToken({ id, username, full_name, role });
+  const user = { id, username, full_name, role };
+  return { token: generateToken(user), user };
 }
 
 export async function login(username: string, password: string) {
@@ -37,7 +38,8 @@ export async function login(username: string, password: string) {
   const valid = await bcrypt.compare(password, user.password_hash);
   if (!valid) throw new Error('Invalid credentials');
 
-  return generateToken({ id: user.id, username: user.username, full_name: user.full_name, role: user.role });
+  const payload = { id: user.id, username: user.username, full_name: user.full_name, role: user.role };
+  return { token: generateToken(payload), user: payload };
 }
 
 export function generateToken(payload: UserPayload): string {
