@@ -1,4 +1,5 @@
 import { Router } from 'express';
+import { authenticate } from '../middleware/auth';
 import authRoutes from './auth.routes';
 import zoneRoutes from './zones.routes';
 import workerRoutes from './workers.routes';
@@ -10,13 +11,16 @@ import dashboardRoutes from './dashboard.routes';
 
 const router = Router();
 
+// Public routes
 router.use('/auth', authRoutes);
-router.use('/zones', zoneRoutes);
-router.use('/workers', workerRoutes);
-router.use('/tasks', taskRoutes);
-router.use('/inventory', inventoryRoutes);
-router.use('/transactions', financeRoutes);
-router.use('/harvests', harvestRoutes);
-router.use('/dashboard', dashboardRoutes);
+
+// Protected routes — require valid JWT
+router.use('/zones', authenticate, zoneRoutes);
+router.use('/workers', authenticate, workerRoutes);
+router.use('/tasks', authenticate, taskRoutes);
+router.use('/inventory', authenticate, inventoryRoutes);
+router.use('/transactions', authenticate, financeRoutes);
+router.use('/harvests', authenticate, harvestRoutes);
+router.use('/dashboard', authenticate, dashboardRoutes);
 
 export default router;
