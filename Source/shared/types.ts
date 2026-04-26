@@ -121,3 +121,88 @@ export type InventoryCategory = 'fertilizer' | 'pesticide' | 'tool' | 'packaging
 export type TransactionType = 'expense' | 'revenue';
 export type TransactionCategory = 'labor' | 'supplies' | 'equipment' | 'sales' | 'transport' | 'other';
 export type HarvestGrade = 'A' | 'B' | 'C';
+
+export type ProjectType = 'poly_house' | 'open_field';
+export type SubsidyStatus = 'active' | 'completed' | 'cancelled';
+export type SubsidyStage = 1 | 2 | 3 | 4 | 5 | 6 | 7;
+export type SubsidyDocCategory = 'application' | 'bank';
+export type SubsidyDocKey =
+  | 'dpr'
+  | 'rtc_ec'
+  | 'noc_co_owner'
+  | 'site_map'
+  | 'aadhaar'
+  | 'pan_or_voter'
+  | 'undertaking'
+  | 'tech_standards'
+  | 'basic_data_sheet'
+  | 'firm_registration'
+  | 'caste_certificate'
+  | 'applicant_photo'
+  | 'bank_appraisal'
+  | 'loan_sanction'
+  | 'legal_search'
+  | 'pre_inspection';
+export type SubsidyEventType = 'entered' | 'completed' | 'note';
+
+export interface SubsidyApplication {
+  id: string;
+  applicant_name: string;
+  family_id: string | null;
+  project_type: ProjectType;
+  subsidy_cap_inr: number;
+  current_stage: SubsidyStage;
+  status: SubsidyStatus;
+  consultant_name: string | null;
+  consultant_phone: string | null;
+  consultant_email: string | null;
+  notes: string | null;
+  dpr_submission_date: string | null;
+  bank_sanction_date: string | null;
+  online_application_date: string | null;
+  goc_date: string | null;
+  first_term_loan_release_date: string | null;
+  project_completion_date: string | null;
+  subsidy_claim_date: string | null;
+  subsidy_received_date: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface SubsidyDocument {
+  id: string;
+  application_id: string;
+  doc_key: SubsidyDocKey;
+  category: SubsidyDocCategory;
+  is_uploaded: boolean;
+  is_notarized: boolean;
+  is_translated: boolean;
+  file_url: string | null;
+  submitted_date: string | null;
+  notes: string | null;
+}
+
+export interface SubsidyStageEvent {
+  id: string;
+  application_id: string;
+  stage: SubsidyStage;
+  event_type: SubsidyEventType;
+  event_date: string;
+  notes: string | null;
+  created_at: string;
+}
+
+export interface SubsidyDeadlines {
+  originals_due_date: string | null;
+  completion_deadline: string | null;
+  claim_deadline: string | null;
+  originals_days_remaining: number | null;
+  completion_days_remaining: number | null;
+  claim_days_remaining: number | null;
+}
+
+export interface SubsidyApplicationDetail extends SubsidyApplication {
+  documents: SubsidyDocument[];
+  stage_events: SubsidyStageEvent[];
+  deadlines: SubsidyDeadlines;
+}
