@@ -1,8 +1,11 @@
 import crypto from 'crypto';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
+import { OAuth2Client } from 'google-auth-library';
 import db from '../config/db';
 import { env } from '../config/env';
+
+const googleClient = new OAuth2Client(env.GOOGLE_CLIENT_ID);
 
 interface User {
   id: string;
@@ -66,6 +69,41 @@ export async function updateProfile(userId: string, data: { full_name?: string; 
   const updated = await db('users').where({ id: userId }).first();
   const payload = { id: updated.id, username: updated.username, full_name: updated.full_name, role: updated.role };
   return { token: generateToken(payload), user: payload };
+}
+
+export async function loginWithGoogle(idToken: string) {
+  if (!env.GOOGLE_CLIENT_ID) throw new Error('Google sign-in is not configured');
+
+  const ticket = await googleClient.verifyIdToken({
+    idToken,
+    audience: env.GOOGLE_CLIENT_ID,
+  });
+  const payload = ticket.getPayload();
+  if (!payload?.email) throw new Error('Invalid Google token');
+  if (!payload.email_verified) throw new Error('Google email is not verified');
+
+  // Find user by email or google_id — must be pre-created by admin
+  let user = await db('users')
+    .where({ email: payload.email })
+    .orWhere({ google_id: payload.sub })
+    .first();
+
+  if (!user) {
+    throw new Error('Access denied. Contact your administrator to grant access.');
+  }
+
+  // Link Google account on first sign-in
+  const updates: Record<string, string> = {};
+  if (!user.google_id) updates.google_id = payload.sub!;
+  if (!user.email) updates.email = payload.email;
+  if (payload.picture && user.avatar_url !== payload.picture) updates.avatar_url = payload.picture;
+  if (Object.keys(updates).length > 0) {
+    await db('users').where({ id: user.id }).update(updates);
+    user = { ...user, ...updates };
+  }
+
+  const userPayload = { id: user.id, username: user.username, full_name: user.full_name, role: user.role };
+  return { token: generateToken(userPayload), user: userPayload };
 }
 
 export function generateToken(payload: UserPayload): string {

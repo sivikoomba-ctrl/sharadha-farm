@@ -1,11 +1,12 @@
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { Cherry } from 'lucide-react';
-import { login } from '@/api/auth';
+import { login, loginWithGoogle } from '@/api/auth';
 import { useAuth } from '@/context/AuthContext';
+import GoogleSignInButton from '@/components/GoogleSignInButton';
 
 const loginSchema = z.object({
   username: z.string().min(3, 'Username must be at least 3 characters'),
@@ -13,6 +14,8 @@ const loginSchema = z.object({
 });
 
 type LoginFormData = z.infer<typeof loginSchema>;
+
+const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID || '';
 
 export default function LoginPage() {
   const [error, setError] = useState('');
@@ -38,6 +41,17 @@ export default function LoginPage() {
     }
   };
 
+  const handleGoogleCredential = useCallback(async (credential: string) => {
+    setError('');
+    try {
+      const res = await loginWithGoogle(credential);
+      setAuth(res.data.token, res.data.user);
+      navigate('/', { replace: true });
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Google sign-in failed');
+    }
+  }, [navigate, setAuth]);
+
   return (
     <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-indigo-50 via-white to-emerald-50">
       <div className="w-full max-w-md rounded-2xl bg-white p-8 shadow-xl">
@@ -53,6 +67,22 @@ export default function LoginPage() {
           <div className="mb-4 rounded-lg bg-red-50 p-3 text-sm text-red-700">
             {error}
           </div>
+        )}
+
+        {GOOGLE_CLIENT_ID && (
+          <>
+            <div className="mb-4">
+              <GoogleSignInButton clientId={GOOGLE_CLIENT_ID} onCredential={handleGoogleCredential} />
+            </div>
+            <div className="relative my-6">
+              <div className="absolute inset-0 flex items-center">
+                <div className="w-full border-t border-gray-200" />
+              </div>
+              <div className="relative flex justify-center text-xs">
+                <span className="bg-white px-2 text-gray-400">or sign in with username</span>
+              </div>
+            </div>
+          </>
         )}
 
         <form onSubmit={handleSubmit(handleLogin)} className="space-y-4">

@@ -27,6 +27,17 @@ export async function login(req: Request, res: Response) {
   }
 }
 
+export async function googleLogin(req: Request, res: Response) {
+  try {
+    const { credential } = req.body;
+    if (!credential) return error(res, 'Google credential is required', 400);
+    const result = await authService.loginWithGoogle(credential);
+    return success(res, result);
+  } catch (err: any) {
+    return error(res, err.message, 401);
+  }
+}
+
 export async function me(req: AuthRequest, res: Response) {
   return success(res, req.user);
 }

@@ -37,6 +37,11 @@ export async function login(data: LoginRequest): Promise<AuthResponse> {
   return res.data;
 }
 
+export async function loginWithGoogle(credential: string): Promise<AuthResponse> {
+  const res = await axiosClient.post<AuthResponse>('/auth/google', { credential });
+  return res.data;
+}
+
 export async function register(data: RegisterRequest): Promise<AuthResponse> {
   const res = await axiosClient.post<AuthResponse>('/auth/register', data);
   return res.data;
