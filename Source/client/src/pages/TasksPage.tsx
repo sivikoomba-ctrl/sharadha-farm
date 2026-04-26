@@ -5,6 +5,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { toast } from 'sonner';
 import { format } from 'date-fns';
+import { useTranslation } from 'react-i18next';
 import { Pencil, Trash2 } from 'lucide-react';
 import { fetchTasks, createTask, updateTask, deleteTask } from '@/api/tasks';
 import { fetchZones } from '@/api/zones';
@@ -42,6 +43,7 @@ const priorityColors: Record<Priority, string> = {
 };
 
 export default function TasksPage() {
+  const { t } = useTranslation();
   const queryClient = useQueryClient();
   const [page, setPage] = useState(1);
   const [statusFilter, setStatusFilter] = useState('all');
@@ -64,20 +66,20 @@ export default function TasksPage() {
 
   const createMutation = useMutation({
     mutationFn: createTask,
-    onSuccess: () => { queryClient.invalidateQueries({ queryKey: ['tasks'] }); toast.success('Task created'); closeForm(); },
-    onError: () => toast.error('Failed to create task'),
+    onSuccess: () => { queryClient.invalidateQueries({ queryKey: ['tasks'] }); toast.success(t('tasks.created')); closeForm(); },
+    onError: () => toast.error(t('tasks.createFailed')),
   });
 
   const updateMutation = useMutation({
     mutationFn: ({ id, data }: { id: string; data: Partial<Task> }) => updateTask(id, data),
-    onSuccess: () => { queryClient.invalidateQueries({ queryKey: ['tasks'] }); toast.success('Task updated'); closeForm(); },
-    onError: () => toast.error('Failed to update task'),
+    onSuccess: () => { queryClient.invalidateQueries({ queryKey: ['tasks'] }); toast.success(t('tasks.updated')); closeForm(); },
+    onError: () => toast.error(t('tasks.updateFailed')),
   });
 
   const deleteMutation = useMutation({
     mutationFn: deleteTask,
-    onSuccess: () => { queryClient.invalidateQueries({ queryKey: ['tasks'] }); toast.success('Task deleted'); },
-    onError: () => toast.error('Failed to delete task'),
+    onSuccess: () => { queryClient.invalidateQueries({ queryKey: ['tasks'] }); toast.success(t('tasks.deleted')); },
+    onError: () => toast.error(t('tasks.deleteFailed')),
   });
 
   function openCreate() {
@@ -120,21 +122,40 @@ export default function TasksPage() {
     }
   }
 
+  const statusLabel = (s: TaskStatus): string => {
+    const map: Record<TaskStatus, string> = {
+      pending: t('tasks.statusPending'),
+      in_progress: t('tasks.statusInProgress'),
+      completed: t('tasks.statusCompleted'),
+      cancelled: t('tasks.statusCancelled'),
+    };
+    return map[s];
+  };
+
+  const priorityLabel = (p: Priority): string => {
+    const map: Record<Priority, string> = {
+      low: t('tasks.priorityLow'),
+      medium: t('tasks.priorityMedium'),
+      high: t('tasks.priorityHigh'),
+    };
+    return map[p];
+  };
+
   const columns: Column<Task>[] = [
-    { header: 'Title', accessor: 'title' },
-    { header: 'Zone', accessor: 'zone_name', cell: (row) => row.zone_name ?? '-' },
-    { header: 'Assigned To', accessor: 'worker_name', cell: (row) => row.worker_name ?? '-' },
+    { header: t('tasks.taskTitle'), accessor: 'title' },
+    { header: t('tasks.zone'), accessor: 'zone_name', cell: (row) => row.zone_name ?? '-' },
+    { header: t('tasks.assignedTo'), accessor: 'worker_name', cell: (row) => row.worker_name ?? '-' },
     {
-      header: 'Status', accessor: 'status',
-      cell: (row) => <span className={`inline-block rounded-full px-2.5 py-0.5 text-xs font-medium ${statusColors[row.status]}`}>{row.status.replace('_', ' ')}</span>,
+      header: t('tasks.status'), accessor: 'status',
+      cell: (row) => <span className={`inline-block rounded-full px-2.5 py-0.5 text-xs font-medium ${statusColors[row.status]}`}>{statusLabel(row.status)}</span>,
     },
     {
-      header: 'Priority', accessor: 'priority',
-      cell: (row) => <span className={`inline-block rounded-full px-2.5 py-0.5 text-xs font-medium ${priorityColors[row.priority]}`}>{row.priority}</span>,
+      header: t('tasks.priority'), accessor: 'priority',
+      cell: (row) => <span className={`inline-block rounded-full px-2.5 py-0.5 text-xs font-medium ${priorityColors[row.priority]}`}>{priorityLabel(row.priority)}</span>,
     },
-    { header: 'Due Date', accessor: 'due_date', cell: (row) => row.due_date ? format(new Date(row.due_date), 'dd MMM yyyy') : '-' },
+    { header: t('tasks.dueDate'), accessor: 'due_date', cell: (row) => row.due_date ? format(new Date(row.due_date), 'dd MMM yyyy') : '-' },
     {
-      header: 'Actions', accessor: 'id',
+      header: t('common.actions'), accessor: 'id',
       cell: (row) => (
         <div className="flex gap-2">
           <button onClick={() => openEdit(row)} className="text-blue-600 hover:text-blue-800"><Pencil className="h-4 w-4" /></button>
@@ -146,114 +167,111 @@ export default function TasksPage() {
 
   return (
     <div>
-      <PageHeader title="Tasks" actionLabel="Add Task" onAction={openCreate} />
+      <PageHeader title={t('tasks.title')} actionLabel={t('tasks.addTask')} onAction={openCreate} />
 
-      {/* Filters */}
-      <div className="flex gap-4 mb-4">
+      <div className="flex gap-4 mb-4 flex-wrap">
         <select value={statusFilter} onChange={(e) => { setStatusFilter(e.target.value); setPage(1); }} className="rounded-lg border border-gray-300 px-3 py-2 text-sm">
-          <option value="all">All Status</option>
-          <option value="pending">Pending</option>
-          <option value="in_progress">In Progress</option>
-          <option value="completed">Completed</option>
-          <option value="cancelled">Cancelled</option>
+          <option value="all">{t('tasks.allStatus')}</option>
+          <option value="pending">{t('tasks.statusPending')}</option>
+          <option value="in_progress">{t('tasks.statusInProgress')}</option>
+          <option value="completed">{t('tasks.statusCompleted')}</option>
+          <option value="cancelled">{t('tasks.statusCancelled')}</option>
         </select>
         <select value={priorityFilter} onChange={(e) => { setPriorityFilter(e.target.value); setPage(1); }} className="rounded-lg border border-gray-300 px-3 py-2 text-sm">
-          <option value="all">All Priority</option>
-          <option value="low">Low</option>
-          <option value="medium">Medium</option>
-          <option value="high">High</option>
+          <option value="all">{t('tasks.allPriority')}</option>
+          <option value="low">{t('tasks.priorityLow')}</option>
+          <option value="medium">{t('tasks.priorityMedium')}</option>
+          <option value="high">{t('tasks.priorityHigh')}</option>
         </select>
       </div>
 
       {isError && (
         <div className="mb-4 rounded-lg bg-red-50 border border-red-200 p-4 text-sm text-red-800">
-          Failed to load tasks. Please try again later.
+          {t('tasks.loadFailed')}
         </div>
       )}
 
       <DataTable columns={columns} data={data?.data ?? []} loading={isLoading} />
 
-      {/* Pagination */}
       {data && data.total > 10 && (
         <div className="flex items-center justify-between mt-4">
-          <span className="text-sm text-gray-600">Page {page} of {Math.ceil(data.total / 10)}</span>
+          <span className="text-sm text-gray-600">{t('common.page')} {page} {t('common.of')} {Math.ceil(data.total / 10)}</span>
           <div className="flex gap-2">
-            <button onClick={() => setPage((p) => Math.max(1, p - 1))} disabled={page === 1} className="rounded-lg border px-3 py-1.5 text-sm disabled:opacity-50">Previous</button>
-            <button onClick={() => setPage((p) => p + 1)} disabled={page * 10 >= data.total} className="rounded-lg border px-3 py-1.5 text-sm disabled:opacity-50">Next</button>
+            <button onClick={() => setPage((p) => Math.max(1, p - 1))} disabled={page === 1} className="rounded-lg border px-3 py-1.5 text-sm disabled:opacity-50">{t('common.previous')}</button>
+            <button onClick={() => setPage((p) => p + 1)} disabled={page * 10 >= data.total} className="rounded-lg border px-3 py-1.5 text-sm disabled:opacity-50">{t('common.next')}</button>
           </div>
         </div>
       )}
 
-      {/* Form Modal */}
       {showForm && (
         <div className="fixed inset-0 z-50 flex items-center justify-center">
           <div className="fixed inset-0 bg-black/50" onClick={closeForm} />
           <div className="relative z-10 w-full max-w-lg rounded-xl bg-white p-6 shadow-xl max-h-[90vh] overflow-y-auto">
-            <h2 className="text-lg font-semibold mb-4">{editingItem ? 'Edit Task' : 'Add Task'}</h2>
+            <h2 className="text-lg font-semibold mb-4">{editingItem ? t('tasks.editTask') : t('tasks.addTask')}</h2>
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Title</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">{t('tasks.taskTitle')}</label>
                 <input {...register('title')} className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm" />
                 {errors.title && <p className="text-xs text-red-600 mt-1">{errors.title.message}</p>}
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">{t('tasks.description')}</label>
                 <textarea {...register('description')} rows={3} className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm" />
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Zone</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">{t('tasks.zone')}</label>
                   <select {...register('zone_id')} className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm">
-                    <option value="">None</option>
+                    <option value="">{t('common.none')}</option>
                     {zonesData?.data?.map((z) => <option key={z.id} value={z.id}>{z.name}</option>)}
                   </select>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Assigned To</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">{t('tasks.assignedTo')}</label>
                   <select {...register('assigned_to')} className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm">
-                    <option value="">Unassigned</option>
+                    <option value="">{t('tasks.unassigned')}</option>
                     {workersData?.data?.map((w) => <option key={w.id} value={w.id}>{w.full_name}</option>)}
                   </select>
                 </div>
               </div>
               <div className="grid grid-cols-3 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Status</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">{t('tasks.status')}</label>
                   <select {...register('status')} className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm">
-                    <option value="pending">Pending</option>
-                    <option value="in_progress">In Progress</option>
-                    <option value="completed">Completed</option>
-                    <option value="cancelled">Cancelled</option>
+                    <option value="pending">{t('tasks.statusPending')}</option>
+                    <option value="in_progress">{t('tasks.statusInProgress')}</option>
+                    <option value="completed">{t('tasks.statusCompleted')}</option>
+                    <option value="cancelled">{t('tasks.statusCancelled')}</option>
                   </select>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Priority</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">{t('tasks.priority')}</label>
                   <select {...register('priority')} className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm">
-                    <option value="low">Low</option>
-                    <option value="medium">Medium</option>
-                    <option value="high">High</option>
+                    <option value="low">{t('tasks.priorityLow')}</option>
+                    <option value="medium">{t('tasks.priorityMedium')}</option>
+                    <option value="high">{t('tasks.priorityHigh')}</option>
                   </select>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Category</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">{t('tasks.category')}</label>
                   <select {...register('category')} className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm">
-                    <option value="general">General</option>
-                    <option value="pruning">Pruning</option>
-                    <option value="fertilizing">Fertilizing</option>
-                    <option value="irrigation">Irrigation</option>
-                    <option value="harvest">Harvest</option>
-                    <option value="pest_control">Pest Control</option>
+                    <option value="general">{t('tasks.categoryGeneral')}</option>
+                    <option value="pruning">{t('tasks.categoryPruning')}</option>
+                    <option value="fertilizing">{t('tasks.categoryFertilizing')}</option>
+                    <option value="irrigation">{t('tasks.categoryIrrigation')}</option>
+                    <option value="harvest">{t('tasks.categoryHarvest')}</option>
+                    <option value="pest_control">{t('tasks.categoryPestControl')}</option>
                   </select>
                 </div>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Due Date</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">{t('tasks.dueDate')}</label>
                 <input type="date" {...register('due_date')} className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm" />
                 {errors.due_date && <p className="text-xs text-red-600 mt-1">{errors.due_date.message}</p>}
               </div>
               <div className="flex justify-end gap-3 pt-2">
-                <button type="button" onClick={closeForm} className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50">Cancel</button>
-                <button type="submit" disabled={createMutation.isPending || updateMutation.isPending} className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50">{createMutation.isPending || updateMutation.isPending ? 'Saving...' : 'Save'}</button>
+                <button type="button" onClick={closeForm} className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50">{t('common.cancel')}</button>
+                <button type="submit" disabled={createMutation.isPending || updateMutation.isPending} className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50">{createMutation.isPending || updateMutation.isPending ? t('common.saving') : t('common.save')}</button>
               </div>
             </form>
           </div>
@@ -264,8 +282,8 @@ export default function TasksPage() {
         open={!!deletingId}
         onClose={() => setDeletingId(null)}
         onConfirm={() => deletingId && deleteMutation.mutate(deletingId)}
-        title="Delete Task"
-        message="Are you sure you want to delete this task? This action cannot be undone."
+        title={t('tasks.deleteTitle')}
+        message={t('tasks.deleteConfirm')}
       />
     </div>
   );

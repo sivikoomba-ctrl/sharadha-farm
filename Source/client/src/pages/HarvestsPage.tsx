@@ -5,6 +5,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { toast } from 'sonner';
 import { format } from 'date-fns';
+import { useTranslation } from 'react-i18next';
 import { Pencil, Trash2 } from 'lucide-react';
 import { fetchHarvests, createHarvest, updateHarvest, deleteHarvest } from '@/api/harvests';
 import { fetchZones } from '@/api/zones';
@@ -31,6 +32,7 @@ const gradeColors: Record<HarvestGrade, string> = {
 };
 
 export default function HarvestsPage() {
+  const { t } = useTranslation();
   const queryClient = useQueryClient();
   const [page, setPage] = useState(1);
   const [zoneFilter, setZoneFilter] = useState('all');
@@ -59,20 +61,20 @@ export default function HarvestsPage() {
 
   const createMutation = useMutation({
     mutationFn: createHarvest,
-    onSuccess: () => { queryClient.invalidateQueries({ queryKey: ['harvests'] }); toast.success('Harvest recorded'); closeForm(); },
-    onError: () => toast.error('Failed to record harvest'),
+    onSuccess: () => { queryClient.invalidateQueries({ queryKey: ['harvests'] }); toast.success(t('harvests.recorded')); closeForm(); },
+    onError: () => toast.error(t('harvests.recordFailed')),
   });
 
   const updateMutation = useMutation({
     mutationFn: ({ id, data }: { id: string; data: Partial<Harvest> }) => updateHarvest(id, data),
-    onSuccess: () => { queryClient.invalidateQueries({ queryKey: ['harvests'] }); toast.success('Harvest updated'); closeForm(); },
-    onError: () => toast.error('Failed to update harvest'),
+    onSuccess: () => { queryClient.invalidateQueries({ queryKey: ['harvests'] }); toast.success(t('harvests.updated')); closeForm(); },
+    onError: () => toast.error(t('harvests.updateFailed')),
   });
 
   const deleteMutation = useMutation({
     mutationFn: deleteHarvest,
-    onSuccess: () => { queryClient.invalidateQueries({ queryKey: ['harvests'] }); toast.success('Harvest deleted'); },
-    onError: () => toast.error('Failed to delete harvest'),
+    onSuccess: () => { queryClient.invalidateQueries({ queryKey: ['harvests'] }); toast.success(t('harvests.deleted')); },
+    onError: () => toast.error(t('harvests.deleteFailed')),
   });
 
   function openCreate() {
@@ -108,16 +110,16 @@ export default function HarvestsPage() {
   }
 
   const columns: Column<Harvest>[] = [
-    { header: 'Date', accessor: 'harvest_date', cell: (row) => row.harvest_date ? format(new Date(row.harvest_date), 'dd MMM yyyy') : '-' },
-    { header: 'Zone', accessor: 'zone_name', cell: (row) => row.zone_name ?? '-' },
-    { header: 'Quantity (kg)', accessor: 'quantity_kg', cell: (row) => row.quantity_kg.toLocaleString() },
+    { header: t('harvests.harvestDate'), accessor: 'harvest_date', cell: (row) => row.harvest_date ? format(new Date(row.harvest_date), 'dd MMM yyyy') : '-' },
+    { header: t('harvests.zone'), accessor: 'zone_name', cell: (row) => row.zone_name ?? '-' },
+    { header: t('harvests.quantityKg'), accessor: 'quantity_kg', cell: (row) => row.quantity_kg.toLocaleString() },
     {
-      header: 'Grade', accessor: 'grade',
-      cell: (row) => <span className={`inline-block rounded-full px-2.5 py-0.5 text-xs font-medium ${gradeColors[row.grade]}`}>Grade {row.grade}</span>,
+      header: t('harvests.grade'), accessor: 'grade',
+      cell: (row) => <span className={`inline-block rounded-full px-2.5 py-0.5 text-xs font-medium ${gradeColors[row.grade]}`}>{t('harvests.gradePrefix')} {row.grade}</span>,
     },
-    { header: 'Notes', accessor: 'notes', cell: (row) => row.notes ?? '-' },
+    { header: t('harvests.notes'), accessor: 'notes', cell: (row) => row.notes ?? '-' },
     {
-      header: 'Actions', accessor: 'id',
+      header: t('common.actions'), accessor: 'id',
       cell: (row) => (
         <div className="flex gap-2">
           <button onClick={() => openEdit(row)} className="text-blue-600 hover:text-blue-800"><Pencil className="h-4 w-4" /></button>
@@ -129,87 +131,84 @@ export default function HarvestsPage() {
 
   return (
     <div>
-      <PageHeader title="Harvests" actionLabel="Record Harvest" onAction={openCreate} />
+      <PageHeader title={t('harvests.title')} actionLabel={t('harvests.recordHarvest')} onAction={openCreate} />
 
-      {/* Filters */}
       <div className="flex flex-wrap gap-4 mb-4">
         <select value={zoneFilter} onChange={(e) => { setZoneFilter(e.target.value); setPage(1); }} className="rounded-lg border border-gray-300 px-3 py-2 text-sm">
-          <option value="all">All Zones</option>
+          <option value="all">{t('harvests.allZones')}</option>
           {zonesData?.data?.map((z) => <option key={z.id} value={z.id}>{z.name}</option>)}
         </select>
         <div className="flex items-center gap-2">
-          <label className="text-sm text-gray-600">From:</label>
+          <label className="text-sm text-gray-600">{t('common.from')}:</label>
           <input type="date" value={dateFrom} onChange={(e) => { setDateFrom(e.target.value); setPage(1); }} className="rounded-lg border border-gray-300 px-3 py-2 text-sm" />
         </div>
         <div className="flex items-center gap-2">
-          <label className="text-sm text-gray-600">To:</label>
+          <label className="text-sm text-gray-600">{t('common.to')}:</label>
           <input type="date" value={dateTo} onChange={(e) => { setDateTo(e.target.value); setPage(1); }} className="rounded-lg border border-gray-300 px-3 py-2 text-sm" />
         </div>
       </div>
 
       {isError && (
         <div className="mb-4 rounded-lg bg-red-50 border border-red-200 p-4 text-sm text-red-800">
-          Failed to load harvests. Please try again later.
+          {t('harvests.loadFailed')}
         </div>
       )}
 
       <DataTable columns={columns} data={data?.data ?? []} loading={isLoading} />
 
-      {/* Pagination */}
       {data && data.total > 10 && (
         <div className="flex items-center justify-between mt-4">
-          <span className="text-sm text-gray-600">Page {page} of {Math.ceil(data.total / 10)}</span>
+          <span className="text-sm text-gray-600">{t('common.page')} {page} {t('common.of')} {Math.ceil(data.total / 10)}</span>
           <div className="flex gap-2">
-            <button onClick={() => setPage((p) => Math.max(1, p - 1))} disabled={page === 1} className="rounded-lg border px-3 py-1.5 text-sm disabled:opacity-50">Previous</button>
-            <button onClick={() => setPage((p) => p + 1)} disabled={page * 10 >= data.total} className="rounded-lg border px-3 py-1.5 text-sm disabled:opacity-50">Next</button>
+            <button onClick={() => setPage((p) => Math.max(1, p - 1))} disabled={page === 1} className="rounded-lg border px-3 py-1.5 text-sm disabled:opacity-50">{t('common.previous')}</button>
+            <button onClick={() => setPage((p) => p + 1)} disabled={page * 10 >= data.total} className="rounded-lg border px-3 py-1.5 text-sm disabled:opacity-50">{t('common.next')}</button>
           </div>
         </div>
       )}
 
-      {/* Form Modal */}
       {showForm && (
         <div className="fixed inset-0 z-50 flex items-center justify-center">
           <div className="fixed inset-0 bg-black/50" onClick={closeForm} />
           <div className="relative z-10 w-full max-w-lg rounded-xl bg-white p-6 shadow-xl max-h-[90vh] overflow-y-auto">
-            <h2 className="text-lg font-semibold mb-4">{editingItem ? 'Edit Harvest' : 'Record Harvest'}</h2>
+            <h2 className="text-lg font-semibold mb-4">{editingItem ? t('harvests.editHarvest') : t('harvests.recordHarvest')}</h2>
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Zone</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">{t('harvests.zone')}</label>
                   <select {...register('zone_id')} className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm">
-                    <option value="">Select zone</option>
+                    <option value="">{t('harvests.selectZone')}</option>
                     {zonesData?.data?.map((z) => <option key={z.id} value={z.id}>{z.name}</option>)}
                   </select>
                   {errors.zone_id && <p className="text-xs text-red-600 mt-1">{errors.zone_id.message}</p>}
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Harvest Date</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">{t('harvests.harvestDate')}</label>
                   <input type="date" {...register('harvest_date')} className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm" />
                   {errors.harvest_date && <p className="text-xs text-red-600 mt-1">{errors.harvest_date.message}</p>}
                 </div>
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Quantity (kg)</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">{t('harvests.quantityKg')}</label>
                   <input type="number" step="0.01" {...register('quantity_kg')} className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm" />
                   {errors.quantity_kg && <p className="text-xs text-red-600 mt-1">{errors.quantity_kg.message}</p>}
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Grade</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">{t('harvests.grade')}</label>
                   <select {...register('grade')} className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm">
-                    <option value="A">Grade A</option>
-                    <option value="B">Grade B</option>
-                    <option value="C">Grade C</option>
+                    <option value="A">{t('harvests.gradePrefix')} A</option>
+                    <option value="B">{t('harvests.gradePrefix')} B</option>
+                    <option value="C">{t('harvests.gradePrefix')} C</option>
                   </select>
                 </div>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Notes</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">{t('harvests.notes')}</label>
                 <textarea {...register('notes')} rows={3} className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm" />
               </div>
               <div className="flex justify-end gap-3 pt-2">
-                <button type="button" onClick={closeForm} className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50">Cancel</button>
-                <button type="submit" disabled={createMutation.isPending || updateMutation.isPending} className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50">{createMutation.isPending || updateMutation.isPending ? 'Saving...' : 'Save'}</button>
+                <button type="button" onClick={closeForm} className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50">{t('common.cancel')}</button>
+                <button type="submit" disabled={createMutation.isPending || updateMutation.isPending} className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50">{createMutation.isPending || updateMutation.isPending ? t('common.saving') : t('common.save')}</button>
               </div>
             </form>
           </div>
@@ -220,8 +219,8 @@ export default function HarvestsPage() {
         open={!!deletingId}
         onClose={() => setDeletingId(null)}
         onConfirm={() => deletingId && deleteMutation.mutate(deletingId)}
-        title="Delete Harvest"
-        message="Are you sure you want to delete this harvest record? This action cannot be undone."
+        title={t('harvests.deleteTitle')}
+        message={t('harvests.deleteConfirm')}
       />
     </div>
   );

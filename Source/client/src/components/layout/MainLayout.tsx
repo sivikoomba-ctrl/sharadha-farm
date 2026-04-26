@@ -1,21 +1,24 @@
 import { Outlet, useLocation } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import Sidebar from './Sidebar';
 import TopBar from './TopBar';
 
-const pageTitles: Record<string, string> = {
-  '/': 'Dashboard',
-  '/tasks': 'Tasks',
-  '/inventory': 'Inventory',
-  '/finance': 'Finance',
-  '/workers': 'Workers',
-  '/zones': 'Zones',
-  '/harvests': 'Harvests',
-  '/profile': 'My Profile',
+const pageKeys: Record<string, string> = {
+  '/': 'dashboard',
+  '/tasks': 'tasks',
+  '/inventory': 'inventory',
+  '/finance': 'finance',
+  '/workers': 'workers',
+  '/zones': 'zones',
+  '/harvests': 'harvests',
+  '/profile': 'profile',
 };
 
 export default function MainLayout() {
   const { pathname } = useLocation();
-  const title = pageTitles[pathname] || 'Page Not Found';
+  const { t } = useTranslation();
+  const key = pageKeys[pathname];
+  const title = key ? t(`nav.${key}`) : 'Page Not Found';
 
   return (
     <div className="flex min-h-screen bg-gray-50">

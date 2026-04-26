@@ -1,4 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
+import { useTranslation } from 'react-i18next';
 import { fetchDashboardSummary, fetchHarvestTrend, fetchFinanceTrend } from '@/api/dashboard';
 import LoadingSpinner from '@/components/shared/LoadingSpinner';
 import { TrendingUp, DollarSign, CreditCard, ClipboardList } from 'lucide-react';
@@ -8,6 +9,7 @@ import {
 } from 'recharts';
 
 export default function DashboardPage() {
+  const { t } = useTranslation();
   const { data: summary, isLoading: loadingSummary, isError: errorSummary } = useQuery({
     queryKey: ['dashboard-summary'],
     queryFn: fetchDashboardSummary,
@@ -26,13 +28,13 @@ export default function DashboardPage() {
   if (loadingSummary) return <LoadingSpinner />;
   if (errorSummary) return (
     <div className="rounded-lg bg-red-50 border border-red-200 p-4 text-sm text-red-800">
-      Failed to load dashboard data. Please try again later.
+      {t('dashboard.loadFailed')}
     </div>
   );
 
   const kpis = [
     {
-      label: 'Total Harvest',
+      label: t('dashboard.totalHarvest'),
       value: `${summary?.total_harvest_kg?.toLocaleString() ?? 0} kg`,
       icon: TrendingUp,
       bg: 'bg-blue-50',
@@ -40,7 +42,7 @@ export default function DashboardPage() {
       text: 'text-blue-700',
     },
     {
-      label: 'Revenue',
+      label: t('dashboard.revenue'),
       value: `Rs ${summary?.total_revenue?.toLocaleString() ?? 0}`,
       icon: DollarSign,
       bg: 'bg-green-50',
@@ -48,7 +50,7 @@ export default function DashboardPage() {
       text: 'text-green-700',
     },
     {
-      label: 'Expenses',
+      label: t('dashboard.expenses'),
       value: `Rs ${summary?.total_expenses?.toLocaleString() ?? 0}`,
       icon: CreditCard,
       bg: 'bg-red-50',
@@ -56,7 +58,7 @@ export default function DashboardPage() {
       text: 'text-red-700',
     },
     {
-      label: 'Active Tasks',
+      label: t('dashboard.activeTasks'),
       value: String(summary?.active_tasks ?? 0),
       icon: ClipboardList,
       bg: 'bg-amber-50',
@@ -67,7 +69,7 @@ export default function DashboardPage() {
 
   return (
     <div>
-      <h1 className="text-2xl font-bold text-gray-900 mb-6">Dashboard</h1>
+      <h1 className="text-2xl font-bold text-gray-900 mb-6">{t('dashboard.title')}</h1>
 
       {/* KPI Cards */}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4 mb-8">
@@ -86,9 +88,8 @@ export default function DashboardPage() {
 
       {/* Charts */}
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-        {/* Harvest Trend */}
         <div className="rounded-xl border border-gray-200 bg-white p-6">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">Harvest Trend</h2>
+          <h2 className="text-lg font-semibold text-gray-900 mb-4">{t('dashboard.harvestTrend')}</h2>
           {loadingHarvest ? (
             <LoadingSpinner />
           ) : (
@@ -98,15 +99,14 @@ export default function DashboardPage() {
                 <XAxis dataKey="month" fontSize={12} />
                 <YAxis fontSize={12} />
                 <Tooltip />
-                <Line type="monotone" dataKey="value" stroke="#3b82f6" strokeWidth={2} dot={{ r: 4 }} name="Harvest (kg)" />
+                <Line type="monotone" dataKey="value" stroke="#3b82f6" strokeWidth={2} dot={{ r: 4 }} name={t('dashboard.harvestKg')} />
               </LineChart>
             </ResponsiveContainer>
           )}
         </div>
 
-        {/* Finance Trend */}
         <div className="rounded-xl border border-gray-200 bg-white p-6">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">Finance Trend</h2>
+          <h2 className="text-lg font-semibold text-gray-900 mb-4">{t('dashboard.financeTrend')}</h2>
           {loadingFinance ? (
             <LoadingSpinner />
           ) : (
@@ -116,8 +116,8 @@ export default function DashboardPage() {
                 <XAxis dataKey="month" fontSize={12} />
                 <YAxis fontSize={12} />
                 <Tooltip />
-                <Bar dataKey="revenue" fill="#22c55e" name="Revenue" />
-                <Bar dataKey="expenses" fill="#ef4444" name="Expenses" />
+                <Bar dataKey="revenue" fill="#22c55e" name={t('dashboard.revenue')} />
+                <Bar dataKey="expenses" fill="#ef4444" name={t('dashboard.expenses')} />
               </BarChart>
             </ResponsiveContainer>
           )}

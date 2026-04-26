@@ -4,6 +4,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { toast } from 'sonner';
 import { User, Lock } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { updateProfile } from '@/api/auth';
 import { useAuth } from '@/context/AuthContext';
 
@@ -24,6 +25,7 @@ type ProfileFormData = z.infer<typeof profileSchema>;
 type PasswordFormData = z.infer<typeof passwordSchema>;
 
 export default function ProfilePage() {
+  const { t } = useTranslation();
   const { user, setAuth } = useAuth();
   const [profileSubmitting, setProfileSubmitting] = useState(false);
   const [passwordSubmitting, setPasswordSubmitting] = useState(false);
@@ -42,9 +44,9 @@ export default function ProfilePage() {
     try {
       const res = await updateProfile({ full_name: data.full_name });
       setAuth(res.data.token, res.data.user);
-      toast.success('Profile updated');
+      toast.success(t('profile.profileUpdated'));
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : 'Update failed');
+      toast.error(err instanceof Error ? err.message : t('profile.updateFailed'));
     } finally {
       setProfileSubmitting(false);
     }
@@ -59,9 +61,9 @@ export default function ProfilePage() {
       });
       setAuth(res.data.token, res.data.user);
       passwordForm.reset();
-      toast.success('Password changed successfully');
+      toast.success(t('profile.passwordChanged'));
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : 'Password change failed');
+      toast.error(err instanceof Error ? err.message : t('profile.passwordChangeFailed'));
     } finally {
       setPasswordSubmitting(false);
     }
@@ -76,14 +78,14 @@ export default function ProfilePage() {
             <User className="h-5 w-5 text-indigo-600" />
           </div>
           <div>
-            <h2 className="text-lg font-semibold text-gray-900">Profile Information</h2>
-            <p className="text-sm text-gray-500">Update your name and details</p>
+            <h2 className="text-lg font-semibold text-gray-900">{t('profile.info')}</h2>
+            <p className="text-sm text-gray-500">{t('profile.infoSubtitle')}</p>
           </div>
         </div>
 
         <form onSubmit={profileForm.handleSubmit(handleProfileUpdate)} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Username</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">{t('common.username')}</label>
             <input
               value={user?.username || ''}
               disabled
@@ -91,7 +93,7 @@ export default function ProfilePage() {
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Role</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">{t('common.role')}</label>
             <input
               value={user?.role || ''}
               disabled
@@ -99,7 +101,7 @@ export default function ProfilePage() {
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">{t('common.fullName')}</label>
             <input
               {...profileForm.register('full_name')}
               className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 focus:outline-none"
@@ -113,7 +115,7 @@ export default function ProfilePage() {
             disabled={profileSubmitting}
             className="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700 disabled:opacity-50 transition-colors"
           >
-            {profileSubmitting ? 'Saving...' : 'Save Changes'}
+            {profileSubmitting ? t('common.saving') : t('common.saveChanges')}
           </button>
         </form>
       </div>
@@ -125,14 +127,14 @@ export default function ProfilePage() {
             <Lock className="h-5 w-5 text-amber-600" />
           </div>
           <div>
-            <h2 className="text-lg font-semibold text-gray-900">Change Password</h2>
-            <p className="text-sm text-gray-500">Update your password</p>
+            <h2 className="text-lg font-semibold text-gray-900">{t('profile.changePassword')}</h2>
+            <p className="text-sm text-gray-500">{t('profile.changePasswordSubtitle')}</p>
           </div>
         </div>
 
         <form onSubmit={passwordForm.handleSubmit(handlePasswordChange)} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Current Password</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">{t('profile.currentPassword')}</label>
             <input
               type="password"
               {...passwordForm.register('current_password')}
@@ -143,7 +145,7 @@ export default function ProfilePage() {
             )}
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">New Password</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">{t('profile.newPassword')}</label>
             <input
               type="password"
               {...passwordForm.register('new_password')}
@@ -154,7 +156,7 @@ export default function ProfilePage() {
             )}
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Confirm New Password</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">{t('profile.confirmPassword')}</label>
             <input
               type="password"
               {...passwordForm.register('confirm_password')}
@@ -169,7 +171,7 @@ export default function ProfilePage() {
             disabled={passwordSubmitting}
             className="rounded-lg bg-amber-600 px-4 py-2 text-sm font-medium text-white hover:bg-amber-700 disabled:opacity-50 transition-colors"
           >
-            {passwordSubmitting ? 'Changing...' : 'Change Password'}
+            {passwordSubmitting ? t('profile.changing') : t('profile.changePasswordBtn')}
           </button>
         </form>
       </div>

@@ -6,6 +6,7 @@ import { queryClient } from './store/queryClient'
 import { Toaster } from 'sonner'
 import { AuthProvider } from './context/AuthContext'
 import App from './App'
+import './i18n'
 import './index.css'
 
 if ('serviceWorker' in navigator && import.meta.env.PROD) {

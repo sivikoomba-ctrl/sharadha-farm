@@ -5,6 +5,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { toast } from 'sonner';
 import { format } from 'date-fns';
+import { useTranslation } from 'react-i18next';
 import { Pencil, Trash2, Plus, MapPin } from 'lucide-react';
 import { fetchZones, createZone, updateZone, deleteZone } from '@/api/zones';
 import ConfirmDialog from '@/components/shared/ConfirmDialog';
@@ -35,6 +36,7 @@ const blueberryVarieties = [
 ];
 
 export default function ZonesPage() {
+  const { t } = useTranslation();
   const queryClient = useQueryClient();
   const [showForm, setShowForm] = useState(false);
   const [editingItem, setEditingItem] = useState<Zone | null>(null);
@@ -48,20 +50,20 @@ export default function ZonesPage() {
 
   const createMutation = useMutation({
     mutationFn: createZone,
-    onSuccess: () => { queryClient.invalidateQueries({ queryKey: ['zones'] }); toast.success('Zone created'); closeForm(); },
-    onError: () => toast.error('Failed to create zone'),
+    onSuccess: () => { queryClient.invalidateQueries({ queryKey: ['zones'] }); toast.success(t('zones.created')); closeForm(); },
+    onError: () => toast.error(t('zones.createFailed')),
   });
 
   const updateMutation = useMutation({
     mutationFn: ({ id, data }: { id: string; data: Partial<Zone> }) => updateZone(id, data),
-    onSuccess: () => { queryClient.invalidateQueries({ queryKey: ['zones'] }); toast.success('Zone updated'); closeForm(); },
-    onError: () => toast.error('Failed to update zone'),
+    onSuccess: () => { queryClient.invalidateQueries({ queryKey: ['zones'] }); toast.success(t('zones.updated')); closeForm(); },
+    onError: () => toast.error(t('zones.updateFailed')),
   });
 
   const deleteMutation = useMutation({
     mutationFn: deleteZone,
-    onSuccess: () => { queryClient.invalidateQueries({ queryKey: ['zones'] }); toast.success('Zone deleted'); },
-    onError: () => toast.error('Failed to delete zone'),
+    onSuccess: () => { queryClient.invalidateQueries({ queryKey: ['zones'] }); toast.success(t('zones.deleted')); },
+    onError: () => toast.error(t('zones.deleteFailed')),
   });
 
   function openCreate() {
@@ -97,29 +99,29 @@ export default function ZonesPage() {
     }
   }
 
+  const statusLabel = (status: ZoneStatus): string => t(`zones.status${status.charAt(0).toUpperCase() + status.slice(1)}`);
+
   return (
     <div>
-      {/* Header */}
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">Zones</h1>
+        <h1 className="text-2xl font-bold text-gray-900">{t('zones.title')}</h1>
         <button
           onClick={openCreate}
           className="inline-flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 transition-colors"
         >
           <Plus className="h-4 w-4" />
-          Add Zone
+          {t('zones.addZone')}
         </button>
       </div>
 
       {isLoading && <LoadingSpinner />}
       {isError && (
         <div className="mb-4 rounded-lg bg-red-50 border border-red-200 p-4 text-sm text-red-800">
-          Failed to load zones. Please try again later.
+          {t('zones.loadFailed')}
         </div>
       )}
-      {!isLoading && !isError && (!data?.data || data.data.length === 0) && <EmptyState message="No zones found." />}
+      {!isLoading && !isError && (!data?.data || data.data.length === 0) && <EmptyState message={t('zones.noZones')} />}
 
-      {/* Zone Cards Grid */}
       {!isLoading && data?.data && data.data.length > 0 && (
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {data.data.map((zone) => (
@@ -130,23 +132,23 @@ export default function ZonesPage() {
                   <h3 className="text-lg font-semibold text-gray-900">{zone.name}</h3>
                 </div>
                 <span className={`inline-block rounded-full px-2.5 py-0.5 text-xs font-medium ${statusColors[zone.status]}`}>
-                  {zone.status}
+                  {statusLabel(zone.status)}
                 </span>
               </div>
               <div className="space-y-2 text-sm text-gray-600 mb-4">
-                <p><span className="font-medium">Variety:</span> {zone.variety}</p>
-                <p><span className="font-medium">Area:</span> {zone.area_hectares} hectares</p>
-                <p><span className="font-medium">Planted:</span> {zone.planting_date ? format(new Date(zone.planting_date), 'dd MMM yyyy') : '-'}</p>
+                <p><span className="font-medium">{t('zones.variety')}:</span> {zone.variety}</p>
+                <p><span className="font-medium">{t('zones.areaShort')}:</span> {zone.area_hectares} ha</p>
+                <p><span className="font-medium">{t('zones.planted')}:</span> {zone.planting_date ? format(new Date(zone.planting_date), 'dd MMM yyyy') : '-'}</p>
                 {zone.notes && (
-                  <p className="text-gray-500 line-clamp-2"><span className="font-medium">Notes:</span> {zone.notes}</p>
+                  <p className="text-gray-500 line-clamp-2"><span className="font-medium">{t('zones.notes')}:</span> {zone.notes}</p>
                 )}
               </div>
               <div className="flex gap-2 pt-3 border-t border-gray-100">
                 <button onClick={() => openEdit(zone)} className="inline-flex items-center gap-1 text-sm text-blue-600 hover:text-blue-800">
-                  <Pencil className="h-3.5 w-3.5" /> Edit
+                  <Pencil className="h-3.5 w-3.5" /> {t('common.edit')}
                 </button>
                 <button onClick={() => setDeletingId(zone.id)} className="inline-flex items-center gap-1 text-sm text-red-600 hover:text-red-800">
-                  <Trash2 className="h-3.5 w-3.5" /> Delete
+                  <Trash2 className="h-3.5 w-3.5" /> {t('common.delete')}
                 </button>
               </div>
             </div>
@@ -154,28 +156,27 @@ export default function ZonesPage() {
         </div>
       )}
 
-      {/* Form Modal */}
       {showForm && (
         <div className="fixed inset-0 z-50 flex items-center justify-center">
           <div className="fixed inset-0 bg-black/50" onClick={closeForm} />
           <div className="relative z-10 w-full max-w-lg rounded-xl bg-white p-6 shadow-xl max-h-[90vh] overflow-y-auto">
-            <h2 className="text-lg font-semibold mb-4">{editingItem ? 'Edit Zone' : 'Add Zone'}</h2>
+            <h2 className="text-lg font-semibold mb-4">{editingItem ? t('zones.editZone') : t('zones.addZone')}</h2>
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Name</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">{t('zones.name')}</label>
                 <input {...register('name')} className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm" />
                 {errors.name && <p className="text-xs text-red-600 mt-1">{errors.name.message}</p>}
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Area (hectares)</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">{t('zones.area')}</label>
                   <input type="number" step="0.01" {...register('area_hectares')} className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm" />
                   {errors.area_hectares && <p className="text-xs text-red-600 mt-1">{errors.area_hectares.message}</p>}
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Variety</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">{t('zones.variety')}</label>
                   <select {...register('variety')} className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm">
-                    <option value="">Select variety</option>
+                    <option value="">{t('zones.selectVariety')}</option>
                     {blueberryVarieties.map((v) => <option key={v} value={v}>{v}</option>)}
                   </select>
                   {errors.variety && <p className="text-xs text-red-600 mt-1">{errors.variety.message}</p>}
@@ -183,26 +184,26 @@ export default function ZonesPage() {
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Planting Date</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">{t('zones.plantingDate')}</label>
                   <input type="date" {...register('planting_date')} className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm" />
                   {errors.planting_date && <p className="text-xs text-red-600 mt-1">{errors.planting_date.message}</p>}
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Status</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">{t('zones.status')}</label>
                   <select {...register('status')} className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm">
-                    <option value="active">Active</option>
-                    <option value="dormant">Dormant</option>
-                    <option value="replanting">Replanting</option>
+                    <option value="active">{t('zones.statusActive')}</option>
+                    <option value="dormant">{t('zones.statusDormant')}</option>
+                    <option value="replanting">{t('zones.statusReplanting')}</option>
                   </select>
                 </div>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Notes</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">{t('zones.notes')}</label>
                 <textarea {...register('notes')} rows={3} className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm" />
               </div>
               <div className="flex justify-end gap-3 pt-2">
-                <button type="button" onClick={closeForm} className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50">Cancel</button>
-                <button type="submit" disabled={createMutation.isPending || updateMutation.isPending} className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50">{createMutation.isPending || updateMutation.isPending ? 'Saving...' : 'Save'}</button>
+                <button type="button" onClick={closeForm} className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50">{t('common.cancel')}</button>
+                <button type="submit" disabled={createMutation.isPending || updateMutation.isPending} className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50">{createMutation.isPending || updateMutation.isPending ? t('common.saving') : t('common.save')}</button>
               </div>
             </form>
           </div>
@@ -213,8 +214,8 @@ export default function ZonesPage() {
         open={!!deletingId}
         onClose={() => setDeletingId(null)}
         onConfirm={() => deletingId && deleteMutation.mutate(deletingId)}
-        title="Delete Zone"
-        message="Are you sure you want to delete this zone? This action cannot be undone."
+        title={t('zones.deleteTitle')}
+        message={t('zones.deleteConfirm')}
       />
     </div>
   );

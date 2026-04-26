@@ -1,4 +1,5 @@
 import { useEffect, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 
 interface ConfirmDialogProps {
   open: boolean;
@@ -9,6 +10,7 @@ interface ConfirmDialogProps {
 }
 
 export default function ConfirmDialog({ open, onClose, onConfirm, title, message }: ConfirmDialogProps) {
+  const { t } = useTranslation();
   const handleKeyDown = useCallback((e: KeyboardEvent) => {
     if (e.key === 'Escape') onClose();
   }, [onClose]);
@@ -33,13 +35,13 @@ export default function ConfirmDialog({ open, onClose, onConfirm, title, message
             onClick={onClose}
             className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
           >
-            Cancel
+            {t('common.cancel')}
           </button>
           <button
             onClick={() => { onConfirm(); onClose(); }}
             className="rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700"
           >
-            Confirm
+            {t('common.confirm')}
           </button>
         </div>
       </div>
