@@ -9,6 +9,7 @@ import {
   Users,
   MapPin,
   Cherry,
+  FileCheck,
   X,
 } from 'lucide-react';
 
@@ -20,6 +21,7 @@ const navItems = [
   { to: '/finance', key: 'finance', icon: DollarSign },
   { to: '/workers', key: 'workers', icon: Users },
   { to: '/zones', key: 'zones', icon: MapPin },
+  { to: '/subsidy', key: 'subsidy', icon: FileCheck },
 ] as const;
 
 interface SidebarProps {

@@ -7,6 +7,7 @@
     "inventory": "Inventory",
     "finance": "Finance",
     "harvests": "Harvests",
+    "subsidy": "NHB Subsidy",
     "profile": "My Profile"
   },
   "common": {
@@ -267,5 +268,97 @@
   "notFound": {
     "message": "Page Not Found",
     "back": "Back to Dashboard"
+  },
+  "subsidy": {
+    "title": "NHB Subsidy",
+    "applicantLabel": "Applicant",
+    "subsidyCap": "Subsidy Cap",
+    "startTitle": "Start a new NHB subsidy application",
+    "startSubtitle": "Track the 7-stage process, 16 documents, and three deadlines for the National Horticulture Board subsidy.",
+    "createBtn": "Create Application",
+    "created": "Application created",
+    "createFailed": "Failed to create application",
+    "updated": "Application updated",
+    "stageAdvanced": "Stage advanced",
+    "advanceTo": "Advance to Stage {{stage}}",
+    "stageLabel": "Stage {{num}}",
+    "timelineEmpty": "No stage events yet.",
+    "tabs": {
+      "documents": "Documents",
+      "stages": "Stages",
+      "timeline": "Timeline",
+      "notes": "Notes"
+    },
+    "projectType": {
+      "poly_house": "Poly House",
+      "open_field": "Open Field"
+    },
+    "stage": {
+      "1": "DPR Submission",
+      "2": "Bank Sanction",
+      "3": "Online Application",
+      "4": "Grant of Clearance (GoC)",
+      "5": "First Term Loan Release",
+      "6": "Project Completion",
+      "7": "Subsidy Claim & Receipt"
+    },
+    "stageHint": {
+      "1": "Submit Detailed Project Report and supporting documents.",
+      "2": "Obtain bank loan sanction with appraisal.",
+      "3": "File online application with NHB; originals due within 7 days.",
+      "4": "Wait for NHB to issue Grant of Clearance — required before any term loan release.",
+      "5": "Bank releases first term loan tranche only after GoC.",
+      "6": "Complete project within 18 months of first loan release.",
+      "7": "File subsidy claim within 3 months of project completion."
+    },
+    "deadlines": {
+      "originals": "Originals (7-day)",
+      "completion": "Completion (18-month)",
+      "claim": "Claim (3-month)",
+      "notStarted": "not yet triggered",
+      "daysLeft": "{{days}} days left",
+      "overdueBy": "{{days}} days overdue"
+    },
+    "fields": {
+      "applicantName": "Applicant Name",
+      "familyId": "Family ID",
+      "projectType": "Project Type",
+      "consultantSection": "Consultant Details (optional)",
+      "consultantName": "Consultant Name",
+      "consultantPhone": "Consultant Phone",
+      "consultantEmail": "Consultant Email",
+      "uploaded": "Uploaded",
+      "notarized": "Notarized",
+      "translated": "Translated",
+      "submittedOn": "Submitted on",
+      "subsidyReceived": "Subsidy Received Date",
+      "subsidyReceivedHint": "Setting this on Stage 7 marks the application as completed."
+    },
+    "docGroups": {
+      "application": "Application Documents (12)",
+      "bank": "Bank Documents (4)"
+    },
+    "docs": {
+      "dpr": "Detailed Project Report (DPR)",
+      "rtc_ec": "RTC / Encumbrance Certificate",
+      "noc_co_owner": "NOC from Co-owners",
+      "site_map": "Site Map / Sketch",
+      "aadhaar": "Aadhaar Card",
+      "pan_or_voter": "PAN or Voter ID",
+      "undertaking": "Undertaking / Affidavit",
+      "tech_standards": "Technical Standards Compliance",
+      "basic_data_sheet": "Basic Data Sheet",
+      "firm_registration": "Firm Registration Certificate",
+      "caste_certificate": "Caste / Category Certificate",
+      "applicant_photo": "Applicant Photograph",
+      "bank_appraisal": "Bank Appraisal Report",
+      "loan_sanction": "Loan Sanction Letter",
+      "legal_search": "Legal Search Report",
+      "pre_inspection": "Pre-inspection Report"
+    },
+    "consultantNotice": {
+      "title": "Note",
+      "body": "Kannada translations for legal terminology should be verified by your subsidy consultant before submission."
+    }
   }
 }

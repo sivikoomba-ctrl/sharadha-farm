@@ -9,6 +9,7 @@ import FinancePage from './pages/FinancePage'
 import WorkersPage from './pages/WorkersPage'
 import ZonesPage from './pages/ZonesPage'
 import HarvestsPage from './pages/HarvestsPage'
+import SubsidyPage from './pages/SubsidyPage'
 import ProfilePage from './pages/ProfilePage'
 import NotFoundPage from './pages/NotFoundPage'
 
@@ -45,6 +46,7 @@ function App() {
         <Route path="/workers" element={<WorkersPage />} />
         <Route path="/zones" element={<ZonesPage />} />
         <Route path="/harvests" element={<HarvestsPage />} />
+        <Route path="/subsidy" element={<SubsidyPage />} />
         <Route path="/profile" element={<ProfilePage />} />
         <Route path="*" element={<NotFoundPage />} />
       </Route>

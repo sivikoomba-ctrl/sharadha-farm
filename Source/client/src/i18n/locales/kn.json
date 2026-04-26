@@ -7,6 +7,7 @@
     "inventory": "ದಾಸ್ತಾನು",
     "finance": "ಹಣಕಾಸು",
     "harvests": "ಕೊಯ್ಲು",
+    "subsidy": "NHB ಸಬ್ಸಿಡಿ",
     "profile": "ನನ್ನ ಪ್ರೊಫೈಲ್"
   },
   "common": {
@@ -267,5 +268,97 @@
   "notFound": {
     "message": "ಪುಟ ಕಂಡುಬಂದಿಲ್ಲ",
     "back": "ಡ್ಯಾಶ್‌ಬೋರ್ಡ್‌ಗೆ ಹಿಂತಿರುಗಿ"
+  },
+  "subsidy": {
+    "title": "NHB ಸಬ್ಸಿಡಿ",
+    "applicantLabel": "ಅರ್ಜಿದಾರ",
+    "subsidyCap": "ಸಬ್ಸಿಡಿ ಮಿತಿ",
+    "startTitle": "ಹೊಸ NHB ಸಬ್ಸಿಡಿ ಅರ್ಜಿ ಪ್ರಾರಂಭಿಸಿ",
+    "startSubtitle": "ರಾಷ್ಟ್ರೀಯ ತೋಟಗಾರಿಕಾ ಮಂಡಳಿಯ ಸಬ್ಸಿಡಿಗಾಗಿ 7 ಹಂತಗಳ ಪ್ರಕ್ರಿಯೆ, 16 ದಾಖಲೆಗಳು ಮತ್ತು ಮೂರು ಗಡುವುಗಳನ್ನು ಟ್ರ್ಯಾಕ್ ಮಾಡಿ.",
+    "createBtn": "ಅರ್ಜಿ ರಚಿಸಿ",
+    "created": "ಅರ್ಜಿ ರಚಿಸಲಾಗಿದೆ",
+    "createFailed": "ಅರ್ಜಿ ರಚಿಸಲು ವಿಫಲವಾಗಿದೆ",
+    "updated": "ಅರ್ಜಿ ನವೀಕರಿಸಲಾಗಿದೆ",
+    "stageAdvanced": "ಹಂತ ಮುಂದುವರಿಸಲಾಗಿದೆ",
+    "advanceTo": "ಹಂತ {{stage}}ಗೆ ಮುಂದುವರಿಸಿ",
+    "stageLabel": "ಹಂತ {{num}}",
+    "timelineEmpty": "ಯಾವುದೇ ಹಂತ ಘಟನೆಗಳಿಲ್ಲ.",
+    "tabs": {
+      "documents": "ದಾಖಲೆಗಳು",
+      "stages": "ಹಂತಗಳು",
+      "timeline": "ಸಮಯರೇಖೆ",
+      "notes": "ಟಿಪ್ಪಣಿಗಳು"
+    },
+    "projectType": {
+      "poly_house": "ಪಾಲಿ ಹೌಸ್",
+      "open_field": "ತೆರೆದ ಕ್ಷೇತ್ರ"
+    },
+    "stage": {
+      "1": "DPR ಸಲ್ಲಿಕೆ",
+      "2": "ಬ್ಯಾಂಕ್ ಮಂಜೂರಾತಿ",
+      "3": "ಆನ್‌ಲೈನ್ ಅರ್ಜಿ",
+      "4": "ಅನುಮತಿ ಪ್ರಮಾಣಪತ್ರ (GoC)",
+      "5": "ಮೊದಲ ಸಾಲ ಬಿಡುಗಡೆ",
+      "6": "ಯೋಜನೆ ಪೂರ್ಣಗೊಳಿಸುವಿಕೆ",
+      "7": "ಸಬ್ಸಿಡಿ ಕ್ಲೈಮ್ ಮತ್ತು ಸ್ವೀಕೃತಿ"
+    },
+    "stageHint": {
+      "1": "[KN-TODO] Submit Detailed Project Report and supporting documents.",
+      "2": "[KN-TODO] Obtain bank loan sanction with appraisal.",
+      "3": "[KN-TODO] File online application with NHB; originals due within 7 days.",
+      "4": "[KN-TODO] Wait for NHB to issue Grant of Clearance — required before any term loan release.",
+      "5": "[KN-TODO] Bank releases first term loan tranche only after GoC.",
+      "6": "[KN-TODO] Complete project within 18 months of first loan release.",
+      "7": "[KN-TODO] File subsidy claim within 3 months of project completion."
+    },
+    "deadlines": {
+      "originals": "ಮೂಲ ಪ್ರತಿಗಳು (7 ದಿನ)",
+      "completion": "ಪೂರ್ಣಗೊಳಿಸುವಿಕೆ (18 ತಿಂಗಳು)",
+      "claim": "ಕ್ಲೈಮ್ (3 ತಿಂಗಳು)",
+      "notStarted": "ಇನ್ನೂ ಪ್ರಾರಂಭವಾಗಿಲ್ಲ",
+      "daysLeft": "{{days}} ದಿನಗಳು ಬಾಕಿ",
+      "overdueBy": "{{days}} ದಿನಗಳ ತಡ"
+    },
+    "fields": {
+      "applicantName": "ಅರ್ಜಿದಾರರ ಹೆಸರು",
+      "familyId": "ಕುಟುಂಬ ಗುರುತಿನ ಸಂಖ್ಯೆ",
+      "projectType": "ಯೋಜನೆಯ ಪ್ರಕಾರ",
+      "consultantSection": "ಸಲಹೆಗಾರರ ವಿವರಗಳು (ಐಚ್ಛಿಕ)",
+      "consultantName": "ಸಲಹೆಗಾರರ ಹೆಸರು",
+      "consultantPhone": "ಸಲಹೆಗಾರರ ಫೋನ್",
+      "consultantEmail": "ಸಲಹೆಗಾರರ ಇಮೇಲ್",
+      "uploaded": "ಅಪ್‌ಲೋಡ್ ಮಾಡಲಾಗಿದೆ",
+      "notarized": "[KN-TODO] Notarized",
+      "translated": "ಅನುವಾದಿಸಲಾಗಿದೆ",
+      "submittedOn": "ಸಲ್ಲಿಸಿದ ದಿನಾಂಕ",
+      "subsidyReceived": "ಸಬ್ಸಿಡಿ ಸ್ವೀಕೃತಿ ದಿನಾಂಕ",
+      "subsidyReceivedHint": "ಹಂತ 7ರಲ್ಲಿ ಇದನ್ನು ಹೊಂದಿಸುವುದರಿಂದ ಅರ್ಜಿಯನ್ನು ಪೂರ್ಣಗೊಳಿಸಿದಂತೆ ಗುರುತಿಸುತ್ತದೆ."
+    },
+    "docGroups": {
+      "application": "ಅರ್ಜಿ ದಾಖಲೆಗಳು (12)",
+      "bank": "ಬ್ಯಾಂಕ್ ದಾಖಲೆಗಳು (4)"
+    },
+    "docs": {
+      "dpr": "[KN-TODO] Detailed Project Report (DPR)",
+      "rtc_ec": "[KN-TODO] RTC / Encumbrance Certificate",
+      "noc_co_owner": "[KN-TODO] NOC from Co-owners",
+      "site_map": "[KN-TODO] Site Map / Sketch",
+      "aadhaar": "ಆಧಾರ್ ಕಾರ್ಡ್",
+      "pan_or_voter": "[KN-TODO] PAN or Voter ID",
+      "undertaking": "[KN-TODO] Undertaking / Affidavit",
+      "tech_standards": "[KN-TODO] Technical Standards Compliance",
+      "basic_data_sheet": "[KN-TODO] Basic Data Sheet",
+      "firm_registration": "[KN-TODO] Firm Registration Certificate",
+      "caste_certificate": "[KN-TODO] Caste / Category Certificate",
+      "applicant_photo": "ಅರ್ಜಿದಾರರ ಫೋಟೋ",
+      "bank_appraisal": "[KN-TODO] Bank Appraisal Report",
+      "loan_sanction": "[KN-TODO] Loan Sanction Letter",
+      "legal_search": "[KN-TODO] Legal Search Report",
+      "pre_inspection": "[KN-TODO] Pre-inspection Report"
+    },
+    "consultantNotice": {
+      "title": "ಸೂಚನೆ",
+      "body": "ಸಲ್ಲಿಸುವ ಮೊದಲು ಕಾನೂನು ಪರಿಭಾಷೆಯ ಕನ್ನಡ ಅನುವಾದಗಳನ್ನು ನಿಮ್ಮ ಸಬ್ಸಿಡಿ ಸಲಹೆಗಾರರಿಂದ ಪರಿಶೀಲಿಸಬೇಕು."
+    }
   }
 }
