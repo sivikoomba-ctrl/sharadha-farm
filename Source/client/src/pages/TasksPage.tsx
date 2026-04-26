@@ -218,7 +218,7 @@ export default function TasksPage() {
                 <label className="block text-sm font-medium text-gray-700 mb-1">{t('tasks.description')}</label>
                 <textarea {...register('description')} rows={3} className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm" />
               </div>
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">{t('tasks.zone')}</label>
                   <select {...register('zone_id')} className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm">
@@ -234,7 +234,7 @@ export default function TasksPage() {
                   </select>
                 </div>
               </div>
-              <div className="grid grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">{t('tasks.status')}</label>
                   <select {...register('status')} className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm">

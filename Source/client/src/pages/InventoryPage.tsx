@@ -187,7 +187,7 @@ export default function InventoryPage() {
                 <input {...register('name')} className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm" />
                 {errors.name && <p className="text-xs text-red-600 mt-1">{errors.name.message}</p>}
               </div>
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">{t('inventory.category')}</label>
                   <select {...register('category')} className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm">
@@ -206,7 +206,7 @@ export default function InventoryPage() {
                   </select>
                 </div>
               </div>
-              <div className="grid grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">{t('inventory.quantity')}</label>
                   <input type="number" step="any" {...register('quantity')} className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm" />
